@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>$MOJO Presale</title>
     <link rel="preconnect" href="https://unpkg.com">
     <style>
@@ -35,7 +35,6 @@
             padding: 24px
         }
 
-        /* Jungle hero */
         .hero {
             position: relative;
             border-radius: 20px;
@@ -56,7 +55,7 @@
             background: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
             mix-blend-mode: overlay;
             opacity: .22;
-            filter: saturate(0.8) contrast(1.1);
+            filter: saturate(.9) contrast(1.1);
         }
 
         h1 {
@@ -121,7 +120,8 @@
             align-items: center
         }
 
-        input[type=number] {
+        input[type=number],
+        input[type=text] {
             flex: 1;
             background: #0a100f;
             color: var(--text);
@@ -129,14 +129,6 @@
             border-radius: 12px;
             padding: 14px 16px;
             font-size: 16px
-        }
-
-        .muted {
-            color: var(--muted)
-        }
-
-        .warn {
-            color: var(--warn)
         }
 
         .statgrid {
@@ -190,7 +182,6 @@
             text-align: center
         }
 
-        /* Social buttons */
         .socials {
             display: flex;
             gap: 10px;
@@ -216,13 +207,6 @@
             filter: brightness(1.08)
         }
 
-        .socials svg {
-            width: 16px;
-            height: 16px;
-            opacity: .9
-        }
-
-        /* Responsive */
         @media (max-width:900px) {
             .hero {
                 grid-template-columns: 1fr;
@@ -241,17 +225,14 @@
         <div class="hero">
             <div class="vines"></div>
 
-            <!-- Left: copy -->
+            <!-- Left -->
             <div>
                 <h1>THE JUNGLE RISE OF <br /> <span style="color:#7BFFB3">$MOJO</span> <span class="pill">Presale</span>
                 </h1>
-                <p class="lead">
-                    Join the tribe. Buy with SOL, straight to the treasury. After the presale, contributors receive
-                    <b>$MOJO</b>.
-                    Simple, transparent, on Solana.
-                </p>
+                <p class="lead">Connect your wallet and contribute in SOL. Funds go straight to the treasury. After the
+                    presale, contributors receive <b>$MOJO</b>.</p>
                 <div class="ctaRow">
-                    <button class="btn" id="connectBtn">Connect Wallet</button>
+                    <button class="btn" id="connectBtn" type="button">Connect Wallet</button>
                     <div id="walletTag" class="btn secondary" style="display:none"></div>
                 </div>
                 <div class="socials">
@@ -261,7 +242,7 @@
                 </div>
             </div>
 
-            <!-- Right: presale widget -->
+            <!-- Right -->
             <div class="panel">
                 <div class="statgrid">
                     <div class="stat">
@@ -275,7 +256,7 @@
                     <div class="stat">
                         <div class="label">Price</div>
                         <div class="val">1 SOL = <span id="perSol">0</span> $MOJO</div>
-                        <div class="note">Auto calc tokens</div>
+                        <div class="note">Auto-calculates tokens</div>
                     </div>
                     <div class="stat">
                         <div class="label">USD Raised</div>
@@ -285,8 +266,9 @@
                 </div>
 
                 <div class="row" style="margin-top:8px">
-                    <input id="amount" type="number" min="0" step="0.01" placeholder="Amount in SOL" />
-                    <button class="btn" id="buyBtn">Buy</button>
+                    <!-- text input for better mobile keyboards + pattern to allow decimals -->
+                    <input id="amount" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" placeholder="Amount in SOL" />
+                    <button class="btn" id="buyBtn" type="button">Buy</button>
                 </div>
                 <div class="note">You’ll approve a SOL transfer to the treasury. Min/Max enforced.</div>
 
@@ -310,17 +292,17 @@
         </div>
     </div>
 
-    <!-- solana web3.js -->
+    <!-- Solana web3.js -->
     <script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
     <script>
         /*********** CONFIG — EDIT ME ***********/
-        const TREASURY = "3rJbVUjfeUoSDh9RGh2ijJYCdaWW28iqy47saqAbUCVx";
+        const TREASURY = "CFodiZ4kRdzx57LHeBbrVixaWz5Sh4YNkiZyqXG4UfVF"; // where SOL goes
         const TOKEN = "MOJO";
-        const PRICE_TOKENS_PER_SOL = 2000000; // 1 SOL = 2M MOJO
-        const TARGET_SOL = 200;
-        const BASELINE_SOL = 0.00;
-        const MIN_SOL = 0.1;
-        const MAX_SOL = 10;
+        const PRICE_TOKENS_PER_SOL = 2000000;       // 1 SOL = 2,000,000 MOJO
+        const TARGET_SOL = 200;                     // goal
+        const BASELINE_SOL = 0.00;                  // treasury SOL before presale (set if not zero)
+        const MIN_SOL = 0.1;                        // per tx
+        const MAX_SOL = 3;
 
         const RPC_ENDPOINT = "https://api.mainnet-beta.solana.com";
         const COINGECKO_SOL_PRICE = "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd";
@@ -343,30 +325,33 @@
             solUsd: 0
         };
 
-        async function fetchSolPrice() {
-            try {
-                const r = await fetch(COINGECKO_SOL_PRICE); const j = await r.json();
-                state.solUsd = j.solana.usd || 0;
-            } catch { }
+        // robust provider detection (Phantom preferred)
+        function detectProvider() {
+            if (window.phantom?.solana) return window.phantom.solana;
+            if (window.solana?.isPhantom || window.solana?.isSolflare || window.solana?.isBackpack || window.solana?.isBraveWallet)
+                return window.solana;
+            return null;
         }
 
-        async function getProvider() {
-            if ("solana" in window) {
-                const p = window.solana;
-                if (p.isPhantom || p.isSolflare || p.isBackpack || p.isBraveWallet) return p;
-            }
-            throw new Error("No Solana wallet found. Install Phantom.");
+        async function getProviderOrThrow() {
+            const p = detectProvider();
+            if (!p) throw new Error("No Solana wallet found. Open this page in a browser with Phantom (or use Phantom in-app browser).");
+            return p;
         }
 
         async function connect() {
             try {
-                state.provider = await getProvider();
-                const res = await state.provider.connect();
-                state.pubkey = new PublicKey(res.publicKey.toString());
+                const p = await getProviderOrThrow();
+                // must be called by a user click for some wallets
+                const res = await p.connect({ onlyIfTrusted: false });
+                state.provider = p;
+                state.pubkey = new PublicKey((res?.publicKey || p.publicKey).toString());
                 $("walletTag").style.display = "inline-block";
                 $("walletTag").textContent = short(state.pubkey.toBase58());
                 $("result").textContent = "";
-            } catch (e) { $("result").textContent = "❌ " + (e.message || e); }
+            } catch (e) {
+                $("result").textContent = "❌ " + (e.message || String(e));
+            }
         }
 
         function setProgress(raised) {
@@ -383,13 +368,15 @@
                 const current = lamports / LAMPORTS_PER_SOL;
                 const raised = Math.max(0, current - BASELINE_SOL);
                 setProgress(raised);
-            } catch (e) { }
+            } catch { }
         }
 
         async function buy() {
             try {
-                if (!state.pubkey) await connect();
-                const amountSol = parseFloat($("amount").value);
+                if (!state.pubkey) await connect(); // ensure connect on first click
+
+                const raw = $("amount").value.trim().replace(",", ".");
+                const amountSol = parseFloat(raw);
                 if (isNaN(amountSol) || amountSol <= 0) throw new Error("Enter a valid SOL amount.");
                 if (amountSol < MIN_SOL) throw new Error(`Minimum is ${MIN_SOL} SOL.`);
                 if (amountSol > MAX_SOL) throw new Error(`Maximum is ${MAX_SOL} SOL.`);
@@ -399,40 +386,66 @@
                     toPubkey: state.treasury,
                     lamports: Math.round(amountSol * LAMPORTS_PER_SOL),
                 });
-                const { blockhash, lastValidBlockHeight } = await state.connection.getLatestBlockhash('confirmed');
+
+                const { blockhash, lastValidBlockHeight } = await state.connection.getLatestBlockhash("confirmed");
                 const tx = new Transaction({ recentBlockhash: blockhash, feePayer: state.pubkey }).add(ix);
-                const signed = await state.provider.signTransaction(tx);
-                const sig = await state.connection.sendRawTransaction(signed.serialize());
-                $("result").innerHTML = `⏳ Submitted… <a target="_blank" href="https://explorer.solana.com/tx/${sig}">view</a>`;
-                await state.connection.confirmTransaction({ signature: sig, blockhash, lastValidBlockHeight }, "confirmed");
-                $("result").innerHTML = `✅ Success! <a target="_blank" href="https://explorer.solana.com/tx/${sig}">Explorer</a>`;
+
+                // modern wallets
+                if (state.provider.signAndSendTransaction) {
+                    const { signature } = await state.provider.signAndSendTransaction(tx);
+                    $("result").innerHTML = `⏳ Submitted… <a target="_blank" href="https://explorer.solana.com/tx/${signature}">view</a>`;
+                    await state.connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, "confirmed");
+                    $("result").innerHTML = `✅ Success! <a target="_blank" href="https://explorer.solana.com/tx/${signature}">Explorer</a>`;
+                } else {
+                    // legacy flow
+                    const signed = await state.provider.signTransaction(tx);
+                    const sig = await state.connection.sendRawTransaction(signed.serialize());
+                    $("result").innerHTML = `⏳ Submitted… <a target="_blank" href="https://explorer.solana.com/tx/${sig}">view</a>`;
+                    await state.connection.confirmTransaction({ signature: sig, blockhash, lastValidBlockHeight }, "confirmed");
+                    $("result").innerHTML = `✅ Success! <a target="_blank" href="https://explorer.solana.com/tx/${sig}">Explorer</a>`;
+                }
+
                 $("amount").value = "";
                 refreshRaised();
             } catch (e) {
-                $("result").textContent = "❌ " + (e.message || e);
+                $("result").textContent = "❌ " + (e.message || String(e));
             }
         }
 
-        $("connectBtn").onclick = connect;
-        $("buyBtn").onclick = buy;
+        // input → live token estimate
         $("amount").addEventListener("input", () => {
-            const v = parseFloat($("amount").value) || 0;
-            const tokens = Math.max(0, v * PRICE_TOKENS_PER_SOL);
-            $("willGet").textContent = Math.floor(tokens).toLocaleString();
+            const raw = $("amount").value.trim().replace(",", ".");
+            const v = parseFloat(raw);
+            const tokens = !isNaN(v) && v > 0 ? Math.floor(v * PRICE_TOKENS_PER_SOL) : 0;
+            $("willGet").textContent = tokens.toLocaleString();
         });
 
+        // bind buttons
+        $("connectBtn").addEventListener("click", connect);
+        $("buyBtn").addEventListener("click", buy);
+
+        // init
         (async () => {
-            await fetchSolPrice();
-            await refreshRaised();
-            setInterval(refreshRaised, 10000);
-            setInterval(fetchSolPrice, 60000);
+            // eager connect (if already authorized)
             try {
-                const p = await getProvider();
-                if (p.isConnected) {
-                    state.provider = p; state.pubkey = new PublicKey(p.publicKey.toString());
-                    $("walletTag").style.display = "inline-block"; $("walletTag").textContent = short(state.pubkey.toBase58());
+                const p = detectProvider();
+                if (p?.isConnected && p.publicKey) {
+                    state.provider = p;
+                    state.pubkey = new PublicKey(p.publicKey.toString());
+                    $("walletTag").style.display = "inline-block";
+                    $("walletTag").textContent = short(state.pubkey.toBase58());
                 }
             } catch { }
+            // price + raised
+            try {
+                const r = await fetch(COINGECKO_SOL_PRICE); const j = await r.json();
+                state.solUsd = j?.solana?.usd || 0;
+            } catch { }
+            refreshRaised();
+            setInterval(refreshRaised, 10000);
+            setInterval(async () => {
+                try { const r = await fetch(COINGECKO_SOL_PRICE); const j = await r.json(); state.solUsd = j?.solana?.usd || 0; } catch { }
+            }, 60000);
         })();
     </script>
 </body>
