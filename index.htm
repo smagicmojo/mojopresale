@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>$MOJO Presale</title>
+    <link rel="preconnect" href="https://unpkg.com">
+    <style>
+        :root {
+            --bg: #0b1110;
+            --card: #0f1616;
+            --text: #eaf4ef;
+            --muted: #a9b9b2;
+            --accent: #22c55e;
+            --accent2: #16a34a;
+            --line: #20312d;
+            --warn: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font: 16px/1.5 Inter, system-ui, Segoe UI, Roboto
+        }
+
+        .wrap {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 24px
+        }
+
+        /* Jungle hero */
+        .hero {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            background: linear-gradient(180deg, #0e2a1f 0%, #0b1714 100%);
+            border: 1px solid #183128;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .35);
+            padding: 40px 24px;
+            display: grid;
+            grid-template-columns: 1.2fr .9fr;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .vines {
+            position: absolute;
+            inset: 0;
+            background: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+            mix-blend-mode: overlay;
+            opacity: .22;
+            filter: saturate(0.8) contrast(1.1);
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: 44px;
+            line-height: 1.1
+        }
+
+        h1 .pill {
+            display: inline-block;
+            transform: translateY(-4px);
+            font-size: 20px;
+            margin-left: 8px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #112821;
+            border: 1px solid #1c3d33;
+            color: #7ae7a4
+        }
+
+        p.lead {
+            color: var(--muted);
+            max-width: 54ch;
+            margin: 6px 0 18px;
+            font-size: 18px
+        }
+
+        .ctaRow {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap
+        }
+
+        .btn {
+            background: var(--accent);
+            color: #08120f;
+            border: 0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-weight: 700;
+            cursor: pointer
+        }
+
+        .btn.secondary {
+            background: #1e2a27;
+            color: #cfe6dd;
+            border: 1px solid #27433b
+        }
+
+        .panel {
+            background: linear-gradient(180deg, #0f1917 0, #0d1413 100%);
+            padding: 18px;
+            border-radius: 16px;
+            border: 1px solid #1f352e;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .02)
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            align-items: center
+        }
+
+        input[type=number] {
+            flex: 1;
+            background: #0a100f;
+            color: var(--text);
+            border: 1px solid #223630;
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 16px
+        }
+
+        .muted {
+            color: var(--muted)
+        }
+
+        .warn {
+            color: var(--warn)
+        }
+
+        .statgrid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 10px 0
+        }
+
+        .stat {
+            border: 1px solid #1f352e;
+            background: #0a120f;
+            border-radius: 12px;
+            padding: 12px
+        }
+
+        .label {
+            color: #9bb5ac;
+            font-size: 13px
+        }
+
+        .val {
+            font-size: 18px;
+            font-weight: 800
+        }
+
+        .bar {
+            height: 12px;
+            background: #0a0f0e;
+            border: 1px solid #20312d;
+            border-radius: 999px;
+            overflow: hidden
+        }
+
+        .fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent2), #34d399)
+        }
+
+        .note {
+            font-size: 13px;
+            color: #a7b7b0;
+            margin-top: 6px
+        }
+
+        .foot {
+            margin-top: 20px;
+            color: #8ca199;
+            font-size: 13px;
+            text-align: center
+        }
+
+        /* Social buttons */
+        .socials {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap
+        }
+
+        .socials a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #1e2a27;
+            border: 1px solid #27433b;
+            color: #cfe6dd;
+            padding: 10px 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px
+        }
+
+        .socials a:hover {
+            filter: brightness(1.08)
+        }
+
+        .socials svg {
+            width: 16px;
+            height: 16px;
+            opacity: .9
+        }
+
+        /* Responsive */
+        @media (max-width:900px) {
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 28px
+            }
+
+            h1 {
+                font-size: 34px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="hero">
+            <div class="vines"></div>
+
+            <!-- Left: copy -->
+            <div>
+                <h1>THE JUNGLE RISE OF <br /> <span style="color:#7BFFB3">$MOJO</span> <span class="pill">Presale</span>
+                </h1>
+                <p class="lead">
+                    Join the tribe. Buy with SOL, straight to the treasury. After the presale, contributors receive
+                    <b>$MOJO</b>.
+                    Simple, transparent, on Solana.
+                </p>
+                <div class="ctaRow">
+                    <button class="btn" id="connectBtn">Connect Wallet</button>
+                    <div id="walletTag" class="btn secondary" style="display:none"></div>
+                </div>
+                <div class="socials">
+                    <a href="https://smagicmojo.github.io/mojo-coin" target="_blank" rel="noopener">🌐 Website</a>
+                    <a href="https://x.com/magicmojocoin" target="_blank" rel="noopener">✖ X (Twitter)</a>
+                    <a href="https://t.me/mojo_coin1" target="_blank" rel="noopener">📢 Telegram</a>
+                </div>
+            </div>
+
+            <!-- Right: presale widget -->
+            <div class="panel">
+                <div class="statgrid">
+                    <div class="stat">
+                        <div class="label">Raised</div>
+                        <div class="val"><span id="raised">0.00</span> SOL</div>
+                        <div class="bar" style="margin-top:8px">
+                            <div id="barfill" class="fill"></div>
+                        </div>
+                        <div class="note"><span id="pct">0.0</span>% of <span id="target">0</span> SOL</div>
+                    </div>
+                    <div class="stat">
+                        <div class="label">Price</div>
+                        <div class="val">1 SOL = <span id="perSol">0</span> $MOJO</div>
+                        <div class="note">Auto calc tokens</div>
+                    </div>
+                    <div class="stat">
+                        <div class="label">USD Raised</div>
+                        <div class="val">$<span id="usd">0</span></div>
+                        <div class="note">Live via Coingecko</div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top:8px">
+                    <input id="amount" type="number" min="0" step="0.01" placeholder="Amount in SOL" />
+                    <button class="btn" id="buyBtn">Buy</button>
+                </div>
+                <div class="note">You’ll approve a SOL transfer to the treasury. Min/Max enforced.</div>
+
+                <div class="row" style="margin-top:8px">
+                    <div class="stat" style="flex:1">
+                        <div class="label">You’ll receive</div>
+                        <div class="val"><span id="willGet">0</span> $MOJO</div>
+                    </div>
+                    <div class="stat" style="flex:.8">
+                        <div class="label">Limits</div>
+                        <div class="val"><span id="min">0</span>–<span id="max">0</span> SOL</div>
+                    </div>
+                </div>
+
+                <div id="result" class="note" style="margin-top:8px"></div>
+            </div>
+        </div>
+
+        <div class="foot">
+            Treasury: <span id="treasuryShort"></span> • Network: Mainnet-Beta
+        </div>
+    </div>
+
+    <!-- solana web3.js -->
+    <script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
+    <script>
+        /*********** CONFIG — EDIT ME ***********/
+        const TREASURY = "3rJbVUjfeUoSDh9RGh2ijJYCdaWW28iqy47saqAbUCVx";
+        const TOKEN = "MOJO";
+        const PRICE_TOKENS_PER_SOL = 2000000; // 1 SOL = 2M MOJO
+        const TARGET_SOL = 200;
+        const BASELINE_SOL = 0.00;
+        const MIN_SOL = 0.1;
+        const MAX_SOL = 10;
+
+        const RPC_ENDPOINT = "https://api.mainnet-beta.solana.com";
+        const COINGECKO_SOL_PRICE = "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd";
+        /****************************************/
+
+        const { Connection, PublicKey, SystemProgram, Transaction, LAMPORTS_PER_SOL } = solanaWeb3;
+        const $ = id => document.getElementById(id);
+        const short = k => k.slice(0, 4) + "…" + k.slice(-4);
+
+        $("target").textContent = TARGET_SOL;
+        $("perSol").textContent = PRICE_TOKENS_PER_SOL.toLocaleString();
+        $("min").textContent = MIN_SOL; $("max").textContent = MAX_SOL;
+        $("treasuryShort").textContent = short(TREASURY);
+
+        const state = {
+            connection: new Connection(RPC_ENDPOINT, "confirmed"),
+            provider: null,
+            pubkey: null,
+            treasury: new PublicKey(TREASURY),
+            solUsd: 0
+        };
+
+        async function fetchSolPrice() {
+            try {
+                const r = await fetch(COINGECKO_SOL_PRICE); const j = await r.json();
+                state.solUsd = j.solana.usd || 0;
+            } catch { }
+        }
+
+        async function getProvider() {
+            if ("solana" in window) {
+                const p = window.solana;
+                if (p.isPhantom || p.isSolflare || p.isBackpack || p.isBraveWallet) return p;
+            }
+            throw new Error("No Solana wallet found. Install Phantom.");
+        }
+
+        async function connect() {
+            try {
+                state.provider = await getProvider();
+                const res = await state.provider.connect();
+                state.pubkey = new PublicKey(res.publicKey.toString());
+                $("walletTag").style.display = "inline-block";
+                $("walletTag").textContent = short(state.pubkey.toBase58());
+                $("result").textContent = "";
+            } catch (e) { $("result").textContent = "❌ " + (e.message || e); }
+        }
+
+        function setProgress(raised) {
+            $("raised").textContent = raised.toFixed(2);
+            const pct = Math.max(0, Math.min(100, (raised / TARGET_SOL) * 100));
+            $("barfill").style.width = pct + "%";
+            $("pct").textContent = pct.toFixed(1);
+            if (state.solUsd) $("usd").textContent = Math.round(raised * state.solUsd).toLocaleString();
+        }
+
+        async function refreshRaised() {
+            try {
+                const lamports = await state.connection.getBalance(state.treasury, "confirmed");
+                const current = lamports / LAMPORTS_PER_SOL;
+                const raised = Math.max(0, current - BASELINE_SOL);
+                setProgress(raised);
+            } catch (e) { }
+        }
+
+        async function buy() {
+            try {
+                if (!state.pubkey) await connect();
+                const amountSol = parseFloat($("amount").value);
+                if (isNaN(amountSol) || amountSol <= 0) throw new Error("Enter a valid SOL amount.");
+                if (amountSol < MIN_SOL) throw new Error(`Minimum is ${MIN_SOL} SOL.`);
+                if (amountSol > MAX_SOL) throw new Error(`Maximum is ${MAX_SOL} SOL.`);
+
+                const ix = SystemProgram.transfer({
+                    fromPubkey: state.pubkey,
+                    toPubkey: state.treasury,
+                    lamports: Math.round(amountSol * LAMPORTS_PER_SOL),
+                });
+                const { blockhash, lastValidBlockHeight } = await state.connection.getLatestBlockhash('confirmed');
+                const tx = new Transaction({ recentBlockhash: blockhash, feePayer: state.pubkey }).add(ix);
+                const signed = await state.provider.signTransaction(tx);
+                const sig = await state.connection.sendRawTransaction(signed.serialize());
+                $("result").innerHTML = `⏳ Submitted… <a target="_blank" href="https://explorer.solana.com/tx/${sig}">view</a>`;
+                await state.connection.confirmTransaction({ signature: sig, blockhash, lastValidBlockHeight }, "confirmed");
+                $("result").innerHTML = `✅ Success! <a target="_blank" href="https://explorer.solana.com/tx/${sig}">Explorer</a>`;
+                $("amount").value = "";
+                refreshRaised();
+            } catch (e) {
+                $("result").textContent = "❌ " + (e.message || e);
+            }
+        }
+
+        $("connectBtn").onclick = connect;
+        $("buyBtn").onclick = buy;
+        $("amount").addEventListener("input", () => {
+            const v = parseFloat($("amount").value) || 0;
+            const tokens = Math.max(0, v * PRICE_TOKENS_PER_SOL);
+            $("willGet").textContent = Math.floor(tokens).toLocaleString();
+        });
+
+        (async () => {
+            await fetchSolPrice();
+            await refreshRaised();
+            setInterval(refreshRaised, 10000);
+            setInterval(fetchSolPrice, 60000);
+            try {
+                const p = await getProvider();
+                if (p.isConnected) {
+                    state.provider = p; state.pubkey = new PublicKey(p.publicKey.toString());
+                    $("walletTag").style.display = "inline-block"; $("walletTag").textContent = short(state.pubkey.toBase58());
+                }
+            } catch { }
+        })();
+    </script>
+</body>
+
+</html>
